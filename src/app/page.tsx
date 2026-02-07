@@ -3,39 +3,135 @@
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
-import { Reveal } from "@/components/ui/Reveal";
-import { properties, agents, testimonials, suburbs } from "@/data/mock";
+import { motion, useScroll, useTransform } from "framer-motion";
 
-/* ═══════════════════════════════════════════════
+const EASE = [0.22, 1, 0.36, 1] as const;
+
+const PROPERTIES = [
+  {
+    slug: "23-viewland-drive-noosa-heads",
+    address: "23 Viewland Drive",
+    suburb: "Noosa Heads",
+    price: "Contact Agent",
+    beds: 5,
+    baths: 4,
+    cars: 3,
+    image:
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=900&h=700&fit=crop&q=85",
+  },
+  {
+    slug: "8-mossman-court-sunshine-beach",
+    address: "8 Mossman Court",
+    suburb: "Sunshine Beach",
+    price: "$3,200,000",
+    beds: 4,
+    baths: 3,
+    cars: 2,
+    image:
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&h=700&fit=crop&q=85",
+  },
+  {
+    slug: "42-pacific-terrace-coolum-beach",
+    address: "42 Pacific Terrace",
+    suburb: "Coolum Beach",
+    price: "$2,750,000",
+    beds: 4,
+    baths: 3,
+    cars: 2,
+    image:
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=900&h=700&fit=crop&q=85",
+  },
+  {
+    slug: "15-burgess-street-mooloolaba",
+    address: "15 Burgess Street",
+    suburb: "Mooloolaba",
+    price: "$1,950,000",
+    beds: 3,
+    baths: 2,
+    cars: 2,
+    image:
+      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=900&h=700&fit=crop&q=85",
+  },
+];
+
+const TILES = [
+  {
+    label: "Buy",
+    href: "/buy",
+    image:
+      "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=600&h=800&fit=crop&q=80",
+  },
+  {
+    label: "Sell",
+    href: "/sell",
+    image:
+      "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=600&h=800&fit=crop&q=80",
+  },
+  {
+    label: "Appraisal",
+    href: "/appraisal",
+    image:
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&h=800&fit=crop&q=80",
+  },
+  {
+    label: "Suburbs",
+    href: "/suburbs",
+    image:
+      "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=600&h=800&fit=crop&q=80",
+  },
+];
+
+/* ═══════════════════════════════════════════
+   FADE IN ON SCROLL
+   ═══════════════════════════════════════════ */
+
+function Fade({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.9, delay, ease: EASE }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════════
    HEADER
-   ═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════ */
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
+
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 80);
+    const fn = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", fn, { passive: true });
     return () => window.removeEventListener("scroll", fn);
   }, []);
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ${
         scrolled
-          ? "bg-white/95 backdrop-blur-md border-b border-brand-cream"
+          ? "bg-white/95 backdrop-blur-md"
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto max-w-[1440px] px-6 md:px-10 flex items-center justify-between h-20 md:h-24">
-        <Link href="/">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12 flex items-center justify-between h-20 md:h-[88px]">
+        <Link href="/" className="relative z-10">
           <span
-            className={`font-display text-base md:text-lg tracking-[0.08em] transition-colors duration-500 ${
+            className={`font-display text-[13px] md:text-[15px] tracking-[0.12em] transition-colors duration-700 ${
               scrolled ? "text-brand-black" : "text-white"
             }`}
           >
@@ -43,39 +139,40 @@ function Header() {
           </span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-10">
+        <nav className="hidden lg:flex items-center gap-12">
           {["Buy", "Sell", "About", "Team", "Contact"].map((item) => (
-            <span
+            <Link
               key={item}
-              className={`font-serif text-[13px] tracking-wide cursor-pointer transition-colors duration-300 ${
+              href={`/${item.toLowerCase()}`}
+              className={`relative font-serif text-[13px] tracking-[0.02em] transition-colors duration-500 after:absolute after:bottom-[-2px] after:left-0 after:h-px after:w-0 after:transition-all after:duration-500 hover:after:w-full ${
                 scrolled
-                  ? "text-brand-dark hover:text-brand-black"
-                  : "text-white/70 hover:text-white"
+                  ? "text-brand-dark hover:text-brand-black after:bg-brand-black"
+                  : "text-white/60 hover:text-white after:bg-white"
               }`}
             >
               {item}
-            </span>
+            </Link>
           ))}
         </nav>
 
         <Link
-          href="#"
-          className={`hidden md:inline-block font-serif text-[13px] tracking-wide px-6 py-2.5 transition-all duration-500 ${
+          href="/appraisal"
+          className={`hidden md:inline-block font-display text-[10px] tracking-[0.12em] px-6 py-3 transition-all duration-700 ${
             scrolled
-              ? "bg-brand-black text-brand-cream hover:bg-brand-dark"
+              ? "bg-brand-black text-white hover:bg-brand-dark"
               : "border border-white/30 text-white hover:bg-white/10"
           }`}
         >
-          Free Appraisal
+          APPRAISAL
         </Link>
       </div>
     </header>
   );
 }
 
-/* ═══════════════════════════════════════════════
-   HERO — full-bleed cinematic
-   ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
 
 function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -83,185 +180,112 @@ function Hero() {
     target: ref,
     offset: ["start start", "end start"],
   });
-  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
     <section ref={ref} className="relative h-[100svh] min-h-[700px] overflow-hidden">
-      {/* Parallax image */}
       <motion.div className="absolute inset-0" style={{ y: imgY }}>
-        <div className="absolute inset-0 animate-ken-burns">
-          <Image
-            src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&h=1080&fit=crop&q=90"
-            alt="Luxury Sunshine Coast residence"
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-        </div>
+        <Image
+          src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=1920&h=1080&fit=crop&q=90"
+          alt="Sunshine Coast coastline"
+          fill
+          priority
+          className="object-cover scale-[1.1]"
+          sizes="100vw"
+        />
       </motion.div>
 
-      {/* Gradients */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/10" />
 
-      {/* Content */}
       <motion.div
         className="relative z-10 h-full flex flex-col justify-end"
-        style={{ opacity }}
+        style={{ opacity: contentOpacity }}
       >
-        <div className="mx-auto max-w-[1440px] w-full px-6 md:px-10 pb-24 md:pb-32">
+        <div className="mx-auto max-w-[1440px] w-full px-6 md:px-12 pb-16 md:pb-24">
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: 64 }}
-            transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
-            className="h-px bg-brand-cream/50 mb-8"
+            animate={{ width: 48 }}
+            transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+            className="h-px bg-white/40 mb-8"
           />
           <motion.h1
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-[clamp(2.5rem,8vw,7rem)] leading-[0.95] tracking-[0.04em] text-white"
+            transition={{ duration: 1, delay: 0.5, ease: EASE }}
+            className="font-display text-[clamp(2rem,5vw,4rem)] tracking-[0.14em] text-white leading-none"
           >
-            THE COAST
-            <br />
-            IS OURS
+            EASTELL & CO
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.9 }}
-            className="mt-6 font-serif italic text-lg md:text-xl text-white/50 max-w-md"
+            transition={{ duration: 1, delay: 1 }}
+            className="mt-4 font-serif italic text-[15px] md:text-[17px] text-white/50 tracking-[0.02em]"
           >
-            Sunshine Coast&apos;s premier real estate agency
+            Sunshine Coast
           </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="mt-10 flex gap-4"
-          >
-            <Link
-              href="#properties"
-              className="px-8 py-4 bg-brand-cream text-brand-black font-serif text-[13px] tracking-wide hover:bg-white transition-colors duration-300"
-            >
-              View Properties
-            </Link>
-            <Link
-              href="#contact"
-              className="px-8 py-4 border border-white/25 text-white font-serif text-[13px] tracking-wide hover:bg-white/10 transition-colors duration-300"
-            >
-              Free Appraisal
-            </Link>
-          </motion.div>
         </div>
       </motion.div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
-        <div className="w-px h-14 origin-top bg-white/25 animate-pulse-line" />
-      </div>
     </section>
   );
 }
 
-/* ═══════════════════════════════════════════════
-   STATS
-   ═══════════════════════════════════════════════ */
-
-function Stats() {
-  const items = [
-    { value: "$180M+", label: "Settled 2025" },
-    { value: "200+", label: "5-Star Reviews" },
-    { value: "15+", label: "Years Experience" },
-    { value: "60+", label: "Suburbs Served" },
-  ];
-
-  return (
-    <section className="bg-brand-black">
-      <div className="mx-auto max-w-[1440px] px-6 md:px-10 py-20 md:py-24">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 md:gap-0 md:divide-x md:divide-white/[0.08]">
-          {items.map((item, i) => (
-            <Reveal key={item.label} delay={i * 0.1}>
-              <div className="text-center px-4">
-                <span className="font-display text-4xl sm:text-5xl lg:text-6xl tracking-[0.04em] text-white block">
-                  {item.value}
-                </span>
-                <span className="mt-4 block font-serif text-[11px] uppercase tracking-[0.15em] text-white/30">
-                  {item.label}
-                </span>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    FEATURED PROPERTIES
-   ═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════ */
 
-function FeaturedProperties() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-
+function Properties() {
   return (
-    <section id="properties" className="py-24 md:py-36 bg-white">
-      <div className="mx-auto max-w-[1440px] px-6 md:px-10">
-        <Reveal>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
-            <div>
-              <span className="font-display text-[11px] tracking-[0.15em] text-brand-grey block mb-4">
-                CURRENTLY LISTED
-              </span>
-              <div className="w-10 h-px bg-brand-grey/30 mb-8" />
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl tracking-[0.04em] text-brand-black">
-                FEATURED
-                <br />
-                PROPERTIES
-              </h2>
-            </div>
-            <span className="font-serif text-[13px] text-brand-dark border-b border-brand-grey/30 pb-1 cursor-pointer hover:text-brand-black hover:border-brand-black transition-colors">
-              View All Properties →
+    <section className="py-28 md:py-40 bg-white">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12">
+        <Fade>
+          <div className="flex items-end justify-between mb-16 md:mb-20">
+            <span className="font-display text-[10px] tracking-[0.15em] text-brand-grey">
+              FEATURED
             </span>
+            <Link
+              href="/buy"
+              className="font-serif text-[13px] text-brand-dark hover:text-brand-black transition-colors duration-500 border-b border-brand-grey/30 pb-0.5 hover:border-brand-black"
+            >
+              View all properties
+            </Link>
           </div>
-        </Reveal>
+        </Fade>
 
-        <div
-          ref={scrollRef}
-          className="flex gap-6 md:gap-8 overflow-x-auto scrollbar-hide pb-6 -mx-6 px-6 md:-mx-10 md:px-10 snap-x snap-mandatory"
-        >
-          {properties.map((p, i) => (
-            <Reveal key={p.id} delay={i * 0.08} className="flex-shrink-0 w-[85vw] sm:w-[420px] snap-start">
-              <article className="group cursor-pointer">
-                <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="grid md:grid-cols-2 gap-x-8 gap-y-16 md:gap-y-20">
+          {PROPERTIES.map((p, i) => (
+            <Fade key={p.slug} delay={i * 0.1}>
+              <Link href={`/property/${p.slug}`} className="group block">
+                <div className="relative aspect-[4/3] overflow-hidden bg-brand-light">
                   <Image
                     src={p.image}
                     alt={p.address}
                     fill
-                    className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-110"
-                    sizes="(max-width: 640px) 85vw, 420px"
+                    className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.03]"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
                 </div>
-                <div className="mt-5">
-                  <span className="font-display text-[10px] tracking-[0.15em] text-brand-grey">
+                <div className="mt-5 md:mt-6">
+                  <span className="font-display text-[9px] tracking-[0.15em] text-brand-grey">
                     {p.suburb.toUpperCase()}
                   </span>
-                  <h3 className="mt-1.5 font-serif font-black text-lg md:text-xl text-brand-black group-hover:text-brand-dark transition-colors duration-300">
+                  <h3 className="mt-1 font-serif font-black text-[20px] md:text-[22px] text-brand-black group-hover:text-brand-dark transition-colors duration-500">
                     {p.address}
                   </h3>
-                  <p className="mt-2 font-serif text-brand-dark">{p.price}</p>
-                  <div className="mt-3 pt-3 border-t border-brand-cream flex gap-5 font-serif text-[13px] text-brand-grey">
-                    <span>{p.beds} Bed</span>
-                    <span>{p.baths} Bath</span>
-                    <span>{p.cars} Car</span>
-                    <span>{p.land}</span>
+                  <div className="mt-3 flex items-center gap-3 font-serif text-[13px] text-brand-grey">
+                    <span>{p.beds}</span>
+                    <span className="text-brand-grey/30">·</span>
+                    <span>{p.baths}</span>
+                    <span className="text-brand-grey/30">·</span>
+                    <span>{p.cars}</span>
                   </div>
+                  <p className="mt-2 font-serif text-[15px] text-brand-dark">
+                    {p.price}
+                  </p>
                 </div>
-              </article>
-            </Reveal>
+              </Link>
+            </Fade>
           ))}
         </div>
       </div>
@@ -269,9 +293,9 @@ function FeaturedProperties() {
   );
 }
 
-/* ═══════════════════════════════════════════════
-   ABOUT — editorial split
-   ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   ABOUT
+   ═══════════════════════════════════════════ */
 
 function About() {
   const ref = useRef<HTMLElement>(null);
@@ -279,340 +303,193 @@ function About() {
     target: ref,
     offset: ["start end", "end start"],
   });
-  const imgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const imgY = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
 
   return (
-    <section ref={ref} className="py-24 md:py-36 bg-brand-cream overflow-hidden">
-      <div className="mx-auto max-w-[1440px] px-6 md:px-10">
-        <div className="grid md:grid-cols-12 gap-10 md:gap-0 items-center">
-          {/* Image — offset left */}
-          <Reveal variant="fadeLeft" className="md:col-span-5 md:-ml-10">
-            <div className="relative aspect-[3/4] overflow-hidden">
+    <section ref={ref} className="py-28 md:py-40 bg-brand-cream overflow-hidden">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12">
+        <div className="grid md:grid-cols-12 gap-12 md:gap-8 items-center">
+          <Fade className="md:col-span-7">
+            <div className="relative aspect-[3/2] overflow-hidden">
               <motion.div className="absolute inset-0" style={{ y: imgY }}>
                 <Image
-                  src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&h=1067&fit=crop&q=90"
-                  alt="Sunshine Coast aerial"
+                  src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&h=800&fit=crop&q=90"
+                  alt="Sunshine Coast"
                   fill
-                  className="object-cover scale-110"
-                  sizes="(max-width: 768px) 100vw, 42vw"
+                  className="object-cover scale-[1.15]"
+                  sizes="(max-width: 768px) 100vw, 58vw"
                 />
               </motion.div>
             </div>
-          </Reveal>
+          </Fade>
 
-          {/* Text */}
-          <div className="md:col-span-6 md:col-start-7">
-            <Reveal variant="fadeRight" delay={0.15}>
-              <span className="font-display text-[11px] tracking-[0.15em] text-brand-grey block mb-4">
-                THE EASTELL APPROACH
-              </span>
-              <div className="w-10 h-px bg-brand-grey/30 mb-8" />
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl tracking-[0.04em] text-brand-black leading-[1.1]">
-                BORN ON THE
-                <br />
-                SUNSHINE COAST
-              </h2>
-              <div className="mt-8 space-y-5 font-serif text-brand-dark leading-relaxed text-[17px]">
-                <p>
-                  We don&apos;t just sell property here — we live here, raise our families
-                  here, and are deeply invested in the community we serve.
-                </p>
-                <p>
-                  This local knowledge gives us an unmatched understanding of what
-                  makes each suburb special, what buyers are looking for, and how
-                  to position your property for the best possible result.
-                </p>
-                <p>
-                  From Noosa to Caloundra and the hinterland, Eastell & Co has the
-                  experience and relationships to deliver outcomes that exceed
-                  expectations.
-                </p>
-              </div>
-              <span className="inline-block mt-10 font-serif text-[13px] text-brand-black border-b border-brand-black pb-1 cursor-pointer hover:text-brand-dark hover:border-brand-dark transition-colors">
-                Our Story →
-              </span>
-            </Reveal>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════
-   TEAM
-   ═══════════════════════════════════════════════ */
-
-function Team() {
-  return (
-    <section className="py-24 md:py-36 bg-brand-black">
-      <div className="mx-auto max-w-[1440px] px-6 md:px-10">
-        <Reveal>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
-            <div>
-              <span className="font-display text-[11px] tracking-[0.15em] text-brand-grey block mb-4">
-                OUR PEOPLE
-              </span>
-              <div className="w-10 h-px bg-white/15 mb-8" />
-              <h2 className="font-display text-3xl md:text-4xl lg:text-5xl tracking-[0.04em] text-white">
-                MEET YOUR
-                <br />
-                LOCAL EXPERTS
-              </h2>
-            </div>
-            <span className="font-serif text-[13px] text-brand-grey border-b border-white/15 pb-1 cursor-pointer hover:text-brand-cream hover:border-brand-cream transition-colors">
-              Full Team →
+          <Fade delay={0.15} className="md:col-span-4 md:col-start-9">
+            <span className="font-display text-[10px] tracking-[0.15em] text-brand-grey block mb-6">
+              ABOUT
             </span>
-          </div>
-        </Reveal>
-
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-          {agents.map((agent, i) => (
-            <Reveal key={agent.name} delay={i * 0.1}>
-              <div className="group cursor-pointer">
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <Image
-                    src={agent.photo}
-                    alt={agent.name}
-                    fill
-                    className="object-cover grayscale group-hover:grayscale-0 transition-all duration-[1s] ease-out group-hover:scale-105"
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700" />
-                </div>
-                <div className="mt-5">
-                  <h3 className="font-serif font-black text-lg text-white group-hover:text-brand-cream transition-colors duration-300">
-                    {agent.name}
-                  </h3>
-                  <p className="font-serif text-[13px] text-brand-grey mt-0.5">{agent.title}</p>
-                  <p className="font-serif text-[13px] text-white/25 mt-2">{agent.phone}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+            <div className="w-8 h-px bg-brand-grey/40 mb-8" />
+            <h2 className="font-display text-[clamp(1.4rem,2.5vw,2rem)] tracking-[0.06em] text-brand-black leading-[1.2]">
+              FIFTEEN YEARS.
+              <br />
+              ONE COAST.
+            </h2>
+            <p className="mt-6 font-serif text-[16px] leading-[1.8] text-brand-dark">
+              Clinton Eastell has spent fifteen years learning every street,
+              every view, and every story worth knowing on the Sunshine
+              Coast. That local knowledge shapes everything we do.
+            </p>
+            <Link
+              href="/about"
+              className="inline-block mt-8 font-serif text-[13px] text-brand-black border-b border-brand-black pb-0.5 hover:text-brand-dark hover:border-brand-dark transition-colors duration-500"
+            >
+              Our story
+            </Link>
+          </Fade>
         </div>
       </div>
     </section>
   );
 }
 
-/* ═══════════════════════════════════════════════
-   SUBURB TICKER
-   ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════
+   NAVIGATION TILES
+   ═══════════════════════════════════════════ */
 
-function SuburbTicker() {
-  const doubled = [...suburbs, ...suburbs];
+function NavTiles() {
   return (
-    <section className="py-10 md:py-14 bg-white border-y border-brand-cream/60 overflow-hidden">
-      <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-32 md:w-56 bg-gradient-to-r from-white to-transparent z-10" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 md:w-56 bg-gradient-to-l from-white to-transparent z-10" />
-        <div className="flex animate-ticker whitespace-nowrap">
-          {doubled.map((s, i) => (
-            <span
-              key={`${s}-${i}`}
-              className="inline-flex items-center gap-10 md:gap-14 px-5 md:px-7 font-display text-lg md:text-2xl tracking-[0.06em] text-brand-grey/15 hover:text-brand-black transition-colors duration-700 cursor-pointer"
-            >
-              <span>{s.toUpperCase()}</span>
-              <span className="text-brand-grey/10 text-xs">◆</span>
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════
-   TESTIMONIALS
-   ═══════════════════════════════════════════════ */
-
-function Testimonials() {
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    const t = setInterval(() => setIdx((p) => (p + 1) % testimonials.length), 8000);
-    return () => clearInterval(t);
-  }, []);
-
-  const t = testimonials[idx];
-
-  return (
-    <section className="py-28 md:py-40 bg-brand-cream">
-      <div className="mx-auto max-w-[900px] px-6 md:px-10 text-center">
-        <Reveal>
-          <span className="font-display text-[11px] tracking-[0.15em] text-brand-grey block mb-4">
-            TESTIMONIALS
-          </span>
-          <div className="w-10 h-px bg-brand-grey/30 mx-auto mb-14" />
-        </Reveal>
-
-        <div className="min-h-[250px] flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <blockquote className="font-serif italic text-2xl md:text-3xl lg:text-[2.5rem] text-brand-black leading-snug">
-                &ldquo;{t.quote}&rdquo;
-              </blockquote>
-              <div className="mt-10">
-                <p className="font-serif font-black text-brand-dark">— {t.author}</p>
-                <p className="font-serif text-[13px] text-brand-grey mt-1">{t.suburb}</p>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        <div className="mt-16 flex justify-center gap-3">
-          {testimonials.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setIdx(i)}
-              className={`transition-all duration-500 h-px ${
-                i === idx ? "bg-brand-black w-12" : "bg-brand-grey/25 w-4 hover:bg-brand-grey/50"
-              }`}
+    <section className="grid grid-cols-2 lg:grid-cols-4">
+      {TILES.map((tile, i) => (
+        <Fade key={tile.label} delay={i * 0.08} className="relative">
+          <Link href={tile.href} className="group relative block aspect-[3/4] overflow-hidden">
+            <Image
+              src={tile.image}
+              alt={tile.label}
+              fill
+              className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.05]"
+              sizes="(max-width: 1024px) 50vw, 25vw"
             />
-          ))}
-        </div>
-      </div>
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/25 transition-colors duration-700" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="font-display text-[11px] md:text-[13px] tracking-[0.14em] text-white">
+                {tile.label.toUpperCase()}
+              </span>
+            </div>
+          </Link>
+        </Fade>
+      ))}
     </section>
   );
 }
 
-/* ═══════════════════════════════════════════════
-   CTA
-   ═══════════════════════════════════════════════ */
-
-function CTA() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const imgY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
-
-  return (
-    <section id="contact" ref={ref} className="relative py-36 md:py-48 overflow-hidden">
-      <motion.div className="absolute inset-0" style={{ y: imgY }}>
-        <Image
-          src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&h=1080&fit=crop&q=90"
-          alt="Sunshine Coast beach"
-          fill
-          className="object-cover scale-125"
-          sizes="100vw"
-        />
-      </motion.div>
-      <div className="absolute inset-0 bg-brand-black/70" />
-
-      <div className="relative z-10 mx-auto max-w-[900px] px-6 md:px-10 text-center">
-        <Reveal>
-          <div className="w-10 h-px bg-white/20 mx-auto mb-10" />
-          <h2 className="font-display text-3xl md:text-4xl lg:text-[3.5rem] tracking-[0.04em] text-white leading-[1.1]">
-            READY TO MAKE
-            <br />
-            YOUR MOVE?
-          </h2>
-          <p className="mt-6 font-serif text-lg text-white/40 max-w-md mx-auto">
-            Whether buying or selling, let&apos;s start the conversation.
-          </p>
-          <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="#"
-              className="px-10 py-5 bg-brand-cream text-brand-black font-serif text-[13px] tracking-wide hover:bg-white transition-colors duration-300"
-            >
-              Get a Free Appraisal
-            </Link>
-            <Link
-              href="#properties"
-              className="px-10 py-5 border border-white/25 text-white font-serif text-[13px] tracking-wide hover:bg-white/10 transition-colors duration-300"
-            >
-              Browse Properties
-            </Link>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    FOOTER
-   ═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════ */
 
 function Footer() {
   return (
-    <footer className="bg-brand-black text-white">
-      <div className="mx-auto max-w-[1440px] px-6 md:px-10 py-20 md:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
-          {/* Brand */}
+    <footer className="bg-brand-black">
+      <div className="mx-auto max-w-[1440px] px-6 md:px-12 py-20 md:py-28">
+        <div className="grid md:grid-cols-12 gap-12 md:gap-8">
           <div className="md:col-span-4">
-            <span className="font-display text-lg tracking-[0.08em] text-brand-cream">
+            <span className="font-display text-[15px] tracking-[0.12em] text-brand-cream">
               EASTELL & CO
             </span>
-            <p className="mt-2 font-display text-[10px] tracking-[0.15em] text-brand-grey">
-              THE COAST IS OURS
-            </p>
-            <div className="mt-8 space-y-2 font-serif text-[13px] text-white/40">
+            <div className="mt-8 space-y-2 font-serif text-[13px] text-white/30 leading-relaxed">
               <p>123 David Low Way</p>
               <p>Coolum Beach QLD 4573</p>
-              <p className="pt-3">
-                <a href="tel:0754461234" className="hover:text-brand-cream transition-colors">(07) 5446 1234</a>
+            </div>
+            <div className="mt-6 space-y-2 font-serif text-[13px] text-white/30">
+              <p>
+                <a
+                  href="tel:0754461234"
+                  className="hover:text-brand-cream transition-colors duration-500"
+                >
+                  (07) 5446 1234
+                </a>
               </p>
               <p>
-                <a href="mailto:hello@eastell.com.au" className="hover:text-brand-cream transition-colors">hello@eastell.com.au</a>
+                <a
+                  href="mailto:hello@eastell.com.au"
+                  className="hover:text-brand-cream transition-colors duration-500"
+                >
+                  hello@eastell.com.au
+                </a>
               </p>
             </div>
           </div>
 
-          {/* Links */}
-          <div className="md:col-span-2 md:col-start-6">
-            <span className="font-display text-[10px] tracking-[0.15em] text-brand-cream block mb-5">EXPLORE</span>
-            {["Buy", "Sell", "Appraisal", "About", "Team", "Contact"].map((l) => (
-              <p key={l} className="font-serif text-[13px] text-white/40 hover:text-brand-cream transition-colors cursor-pointer mb-3">
+          <div className="md:col-span-2 md:col-start-7">
+            <span className="font-display text-[9px] tracking-[0.15em] text-white/20 block mb-6">
+              EXPLORE
+            </span>
+            {["Buy", "Sell", "Appraisal", "About", "Team"].map((l) => (
+              <Link
+                key={l}
+                href={`/${l.toLowerCase()}`}
+                className="block font-serif text-[13px] text-white/30 hover:text-brand-cream transition-colors duration-500 mb-3"
+              >
                 {l}
-              </p>
+              </Link>
             ))}
           </div>
 
-          {/* Suburbs */}
           <div className="md:col-span-2">
-            <span className="font-display text-[10px] tracking-[0.15em] text-brand-cream block mb-5">SUBURBS</span>
-            {suburbs.slice(0, 6).map((s) => (
-              <p key={s} className="font-serif text-[13px] text-white/40 hover:text-brand-cream transition-colors cursor-pointer mb-3">
+            <span className="font-display text-[9px] tracking-[0.15em] text-white/20 block mb-6">
+              AREAS
+            </span>
+            {[
+              "Noosa Heads",
+              "Coolum Beach",
+              "Sunshine Beach",
+              "Mooloolaba",
+              "Maroochydore",
+              "Buderim",
+            ].map((s) => (
+              <Link
+                key={s}
+                href={`/suburbs/${s.toLowerCase().replace(/\s/g, "-")}`}
+                className="block font-serif text-[13px] text-white/30 hover:text-brand-cream transition-colors duration-500 mb-3"
+              >
                 {s}
-              </p>
+              </Link>
             ))}
           </div>
 
-          {/* Connect */}
           <div className="md:col-span-2">
-            <span className="font-display text-[10px] tracking-[0.15em] text-brand-cream block mb-5">CONNECT</span>
+            <span className="font-display text-[9px] tracking-[0.15em] text-white/20 block mb-6">
+              CONNECT
+            </span>
             {["Instagram", "Facebook", "LinkedIn"].map((s) => (
-              <p key={s} className="font-serif text-[13px] text-white/40 hover:text-brand-cream transition-colors cursor-pointer mb-3">
+              <a
+                key={s}
+                href="#"
+                className="block font-serif text-[13px] text-white/30 hover:text-brand-cream transition-colors duration-500 mb-3"
+              >
                 {s}
-              </p>
+              </a>
             ))}
-            <div className="mt-8 font-serif text-[13px] text-white/25 space-y-1">
-              <p>Mon – Fri: 9am – 5pm</p>
-              <p>Sat: 9am – 4pm</p>
-              <p>Sun: By appointment</p>
-            </div>
           </div>
         </div>
       </div>
 
       <div className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-[1440px] px-6 md:px-10 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="font-serif text-[12px] text-white/20">
-            © {new Date().getFullYear()} Eastell & Co. All rights reserved.
+        <div className="mx-auto max-w-[1440px] px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="font-serif text-[11px] text-white/15">
+            &copy; {new Date().getFullYear()} Eastell & Co. All rights reserved.
           </p>
-          <div className="flex gap-6">
-            <span className="font-serif text-[12px] text-white/20 hover:text-white/40 transition-colors cursor-pointer">Privacy</span>
-            <span className="font-serif text-[12px] text-white/20 hover:text-white/40 transition-colors cursor-pointer">Terms</span>
+          <div className="flex gap-8">
+            <Link
+              href="/privacy"
+              className="font-serif text-[11px] text-white/15 hover:text-white/30 transition-colors duration-500"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/terms"
+              className="font-serif text-[11px] text-white/15 hover:text-white/30 transition-colors duration-500"
+            >
+              Terms
+            </Link>
           </div>
         </div>
       </div>
@@ -620,9 +497,9 @@ function Footer() {
   );
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════
    PAGE
-   ═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════ */
 
 export default function Home() {
   return (
@@ -630,13 +507,9 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <Stats />
-        <FeaturedProperties />
+        <Properties />
         <About />
-        <Team />
-        <SuburbTicker />
-        <Testimonials />
-        <CTA />
+        <NavTiles />
       </main>
       <Footer />
     </>

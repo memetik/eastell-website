@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Eastell & Co | Sunshine Coast Real Estate",
+  title: "Eastell & Co — Sunshine Coast Real Estate",
   description:
-    "Sunshine Coast's premier real estate agency. Selling across Noosa, Coolum, Maroochydore, and 60+ suburbs.",
+    "Sunshine Coast real estate. Noosa to Caloundra and everywhere between.",
 };
 
 export default function RootLayout({
