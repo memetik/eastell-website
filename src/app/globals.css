@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* ── Font Faces ── */
 @font-face {
   font-family: "Engravers Gothic";
   src: url("/fonts/EngraversGothicBT-Regular.woff2") format("woff2");
@@ -37,118 +36,67 @@
   font-display: swap;
 }
 
-/* ── Tailwind Theme ── */
 @theme {
-  --color-bg-primary: #faf6f2;
-  --color-bg-secondary: #f4e5d8;
-  --color-bg-dark: #010101;
-  --color-bg-dark-secondary: #1a1a18;
-
-  --color-text-primary: #010101;
-  --color-text-secondary: #58585b;
-  --color-text-inverse: #faf6f2;
-  --color-text-muted: #a7a9ac;
-
-  --color-accent: #8B7355;
-  --color-accent-hover: #A6896A;
-
-  --color-border: rgba(1, 1, 1, 0.08);
-  --color-border-hover: rgba(1, 1, 1, 0.15);
+  --color-e-black: #010101;
+  --color-e-dark: #0a0a0a;
+  --color-e-grey: #58585b;
+  --color-e-mid: #a7a9ac;
+  --color-e-cream: #f4e5d8;
+  --color-e-light: #faf6f2;
 
   --font-display: "Engravers Gothic", Georgia, serif;
   --font-serif: "Hoefler Text", Georgia, "Times New Roman", serif;
 }
 
-/* ── Design Tokens ── */
-:root {
-  --space-xs: 0.5rem;
-  --space-sm: 1rem;
-  --space-md: 2rem;
-  --space-lg: 4rem;
-  --space-xl: 8rem;
-  --space-2xl: 12rem;
-  --space-section: clamp(6rem, 12vh, 12rem);
-
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-  --duration-fast: 0.2s;
-  --duration-normal: 0.4s;
-  --duration-slow: 0.8s;
-  --duration-reveal: 1s;
-}
-
-/* ── Base ── */
 html {
-  scroll-behavior: smooth;
+  background: var(--color-e-black);
 }
 
 body {
   font-family: var(--font-serif);
-  color: var(--color-text-secondary);
-  background: var(--color-bg-primary);
+  color: var(--color-e-light);
+  background: var(--color-e-black);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.65;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+@media (pointer: coarse) {
+  body { cursor: auto; }
+}
+
+a, button { cursor: none; }
+@media (pointer: coarse) {
+  a, button { cursor: auto; }
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-bg-secondary) 70%, transparent);
-  color: var(--color-text-primary);
+  background: var(--color-e-cream);
+  color: var(--color-e-black);
 }
 
-img {
-  -webkit-user-drag: none;
+html.lenis, html.lenis body {
+  height: auto;
 }
 
-/* ── Image treatment: slight desaturation for cohesion ── */
-.img-editorial {
-  filter: saturate(0.92) contrast(1.02);
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
-/* ── Form inputs ── */
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-select,
-textarea {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--space-sm) 0;
-  font-family: var(--font-serif);
-  font-size: 1rem;
-  color: var(--color-text-primary);
-  width: 100%;
-  outline: none;
-  transition: border-color var(--duration-normal) var(--ease-out-expo);
-}
-input:focus,
-select:focus,
-textarea:focus {
-  border-bottom-color: var(--color-accent);
-}
-input::placeholder,
-textarea::placeholder {
-  color: var(--color-text-muted);
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
 }
 
-/* ── Utilities ── */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 
-/* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
   }
 }
