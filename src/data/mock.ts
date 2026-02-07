@@ -1,0 +1,126 @@
+export const properties = [
+  {
+    id: "1",
+    slug: "15-beach-road-coolum-beach",
+    address: "15 Beach Road",
+    suburb: "Coolum Beach",
+    price: "$3,850,000",
+    beds: 5,
+    baths: 4,
+    cars: 3,
+    land: "850m²",
+    image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=500&fit=crop&q=85",
+  },
+  {
+    id: "2",
+    slug: "42-david-low-way-coolum-beach",
+    address: "42 David Low Way",
+    suburb: "Coolum Beach",
+    price: "$2,450,000",
+    beds: 4,
+    baths: 3,
+    cars: 2,
+    land: "650m²",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=500&fit=crop&q=85",
+  },
+  {
+    id: "3",
+    slug: "8-hastings-street-noosa-heads",
+    address: "8 Hastings Street",
+    suburb: "Noosa Heads",
+    price: "$5,200,000",
+    beds: 4,
+    baths: 3,
+    cars: 2,
+    land: "520m²",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=500&fit=crop&q=85",
+  },
+  {
+    id: "4",
+    slug: "23-viewland-drive-noosa-heads",
+    address: "23 Viewland Drive",
+    suburb: "Noosa Heads",
+    price: "$4,100,000",
+    beds: 5,
+    baths: 4,
+    cars: 3,
+    land: "780m²",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=500&fit=crop&q=85",
+  },
+  {
+    id: "5",
+    slug: "11-coral-sea-drive-mooloolaba",
+    address: "11 Coral Sea Drive",
+    suburb: "Mooloolaba",
+    price: "$1,950,000",
+    beds: 4,
+    baths: 2,
+    cars: 2,
+    land: "450m²",
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=500&fit=crop&q=85",
+  },
+  {
+    id: "6",
+    slug: "88-mountain-view-road-buderim",
+    address: "88 Mountain View Road",
+    suburb: "Buderim",
+    price: "$2,200,000",
+    beds: 5,
+    baths: 3,
+    cars: 4,
+    land: "2.5 acres",
+    image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&h=500&fit=crop&q=85",
+  },
+];
+
+export const agents = [
+  {
+    name: "Clinton Eastell",
+    title: "Principal",
+    phone: "0412 345 678",
+    photo: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=500&h=667&fit=crop&crop=face&q=85",
+  },
+  {
+    name: "Sarah Mitchell",
+    title: "Licensed Agent",
+    phone: "0423 456 789",
+    photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&h=667&fit=crop&crop=face&q=85",
+  },
+  {
+    name: "James Turner",
+    title: "Licensed Agent",
+    phone: "0434 567 890",
+    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=500&h=667&fit=crop&crop=face&q=85",
+  },
+  {
+    name: "Emma Collins",
+    title: "Sales Associate",
+    phone: "0445 678 901",
+    photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&h=667&fit=crop&crop=face&q=85",
+  },
+];
+
+export const testimonials = [
+  {
+    quote: "Clinton and the team at Eastell & Co made selling our family home an absolute pleasure. They achieved a price well above our expectations and kept us informed every step of the way.",
+    author: "Sarah & Michael T.",
+    suburb: "Coolum Beach",
+  },
+  {
+    quote: "From our first meeting, we knew we were in good hands. The professionalism, market knowledge, and genuine care shown by the Eastell team was outstanding. They sold our home in just 12 days.",
+    author: "David R.",
+    suburb: "Noosa Heads",
+  },
+  {
+    quote: "The marketing campaign Eastell & Co put together for our property was exceptional. The photography, the copywriting, everything was premium quality. It made all the difference.",
+    author: "Robert & Linda M.",
+    suburb: "Buderim",
+  },
+];
+
+export const suburbs = [
+  "Noosa Heads", "Coolum Beach", "Sunshine Beach", "Peregian Beach",
+  "Mooloolaba", "Maroochydore", "Buderim", "Alexandra Headland",
+  "Caloundra", "Kawana", "Maleny", "Montville",
+  "Golden Beach", "Palmwoods", "Nambour", "Tewantin",
+];

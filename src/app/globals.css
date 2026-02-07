@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Engravers Gothic";
+  src: url("/fonts/EngraversGothicBT-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Hoefler Text";
+  src: url("/fonts/HoeflerText-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Hoefler Text";
+  src: url("/fonts/HoeflerText-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Hoefler Text";
+  src: url("/fonts/HoeflerText-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Hoefler Text";
+  src: url("/fonts/HoeflerText-BlackItalic.woff2") format("woff2");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ── Theme tokens ── */
+@theme {
+  --color-brand-black: #010101;
+  --color-brand-dark: #58585b;
+  --color-brand-grey: #a7a9ac;
+  --color-brand-cream: #f4e5d8;
+  --color-brand-light: #faf6f2;
+
+  --font-display: "Engravers Gothic", "Hoefler Text", Georgia, serif;
+  --font-serif: "Hoefler Text", Georgia, "Times New Roman", serif;
+
+  --animate-ticker: ticker 60s linear infinite;
+  --animate-ticker-reverse: ticker-reverse 60s linear infinite;
+  --animate-pulse-line: pulse-line 2.4s ease-in-out infinite;
+  --animate-ken-burns: ken-burns 20s ease-out forwards;
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes ticker-reverse {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+  @keyframes pulse-line {
+    0%, 100% { transform: scaleY(0); opacity: 0; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+  @keyframes ken-burns {
+    0% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+}
+
+/* ── Base ── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-serif);
+  color: var(--color-brand-dark);
+  background: #fff;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-brand-cream) 60%, transparent);
+  color: var(--color-brand-black);
+}
+
+img { -webkit-user-drag: none; }
+
+/* ── Utilities ── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
